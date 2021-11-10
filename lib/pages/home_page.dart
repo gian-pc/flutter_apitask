@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -59,6 +60,39 @@ class _HomePageState extends State<HomePage> {
                     backgroundImage: NetworkImage("https://images.pexels.com/photos/412840/pexels-photo-412840.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"),
                   )
                 ],
+              ),
+              SizedBox(height: 14.0),
+              ListView.builder(
+                itemCount: 10,
+                primary: true,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemBuilder: (BuildContext context, int index){
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12.withOpacity(0.05),
+                          offset: Offset(2,5),
+                          blurRadius: 12,
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      title: Text("Ir de compras"),
+                      subtitle: Text("Ir a metro a comprar tortillas"),
+                      trailing: Checkbox(
+                        value: true,
+                        onChanged: (bool? value){
+
+                        },
+                      ),
+                    ),
+                  );
+                },
               )
             ],
           ),

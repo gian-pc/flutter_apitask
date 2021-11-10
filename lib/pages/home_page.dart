@@ -10,9 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   List tasks = [];
-
 
   @override
   initState() {
@@ -24,11 +22,28 @@ class _HomePageState extends State<HomePage> {
     String path = "http://192.168.1.5:8000/api/task-list/";
     Uri _uri = Uri.parse(path);
     http.Response response = await http.get(_uri);
-    if(response.statusCode==200){
+    if (response.statusCode == 200) {
       tasks = json.decode(response.body);
-      setState(() {
+      setState(() {});
+    }
+  }
 
-      });
+  updateTask(Map task) async {
+    String path = "http://192.168.1.5:8000/api/task-update/${task["id"]}/";
+    Uri _uri = Uri.parse(path);
+    http.Response response = await http.post(
+      _uri,
+      headers: {
+        "Content-type": "application/json"
+      },
+      body: json.encode({
+        "title": task["title"],
+        "description":task["description"],
+        "completed":task["completed"],
+      })
+    );
+    if(response.statusCode == 200){
+      print("Actualizado");
     }
   }
 
@@ -68,7 +83,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   CircleAvatar(
                     radius: 26,
-                    backgroundImage: NetworkImage("https://images.pexels.com/photos/412840/pexels-photo-412840.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"),
+                    backgroundImage: NetworkImage(
+                        "https://images.pexels.com/photos/412840/pexels-photo-412840.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"),
                   )
                 ],
               ),
@@ -78,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                 primary: true,
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-                itemBuilder: (BuildContext context, int index){
+                itemBuilder: (BuildContext context, int index) {
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: 8.0),
                     decoration: BoxDecoration(
@@ -87,22 +103,27 @@ class _HomePageState extends State<HomePage> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black12.withOpacity(0.05),
-                          offset: Offset(2,5),
+                          offset: Offset(2, 5),
                           blurRadius: 12,
                         ),
                       ],
                     ),
                     child: ListTile(
-                      title: Text(tasks[index]["title"]),
+                      title: Text(
+                        tasks[index]["title"],
+                        style: TextStyle(
+                          decoration: tasks[index]["completed"]
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                        ),
+                      ),
                       subtitle: Text(tasks[index]["description"]),
                       trailing: Checkbox(
                         value: tasks[index]["completed"],
-                        onChanged: (bool? value){
-                          tasks[index]["completed"]=value;
-                          setState(() {
-
-                          });
-
+                        onChanged: (bool? value) {
+                          tasks[index]["completed"] = value;
+                          updateTask(tasks[index]);
+                          setState(() {});
                         },
                       ),
                     ),
